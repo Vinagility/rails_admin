@@ -15,6 +15,38 @@ $(document).on 'nested:fieldAdded', 'form', (content) ->
   content = parent_group.children('.tab-content')
   toggler = controls.find('.toggler')
   nav.append(new_tab)
+
+  # fix for option tree
+  temp_classes = parent_group.attr('class').trim().split(" ")
+  if temp_classes[temp_classes.length - 1] == "option_tree_level2s_field"
+    correct_id = parent_group.attr('id').match(/[0-9]+/g)[3]
+    splitter = "option_tree_level1s_attributes]["
+
+    temp_name = field.children().first().attr('name')
+    first_part = temp_name.split(splitter)[0]
+    last_part = temp_name.split(splitter)[1]
+    correct_name = first_part + splitter + correct_id + last_part.substring(1, last_part.length)
+    field.children().first().attr('name', correct_name)
+
+    textarea_field = field.children().last().find('.value_field').find('textarea')
+    first_part = textarea_field.attr('name').split(splitter)[0]
+    last_part = textarea_field.attr('name').split(splitter)[1]
+    correct_name = first_part + splitter + correct_id + last_part.substring(1, last_part.length)
+    textarea_field.attr('name', correct_name)
+
+    photo_field = $(field.children().last().find('.photo_field').find('input')[0])
+    first_part = photo_field.attr('name').split(splitter)[0]
+    last_part = photo_field.attr('name').split(splitter)[1]
+    correct_name = first_part + splitter + correct_id + last_part.substring(1, last_part.length)
+    photo_field.attr('name', correct_name)
+
+    photo_cached_field = $(field.children().last().find('.photo_field').find('input')[1])
+    first_part = photo_cached_field.attr('name').split(splitter)[0]
+    last_part = photo_cached_field.attr('name').split(splitter)[1]
+    correct_name = first_part + splitter + correct_id + last_part.substring(1, last_part.length)
+    photo_cached_field.attr('name', correct_name)
+  # End fix for opttree
+
   $(window.document).trigger('rails_admin.dom_ready', [field, parent_group]) # fire dom_ready for new player in town
   new_tab.children('a').tab('show') # activate added tab
   nav.select(':hidden').show('slow') # show nav if hidden
